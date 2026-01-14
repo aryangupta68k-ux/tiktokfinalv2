@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { Info } from "lucide-react"
 import { TapRainModal } from "@/components/taprain-modal"
 
@@ -38,60 +38,6 @@ function CountUp({ end, duration = 2000 }: { end: number; duration?: number }) {
   return <span>{formatNumber(count)}</span>
 }
 
-function ScarcityCounter() {
-  const [spots, setSpots] = useState(320)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
-  useEffect(() => {
-    const updateCounter = () => {
-      setSpots((prev) => {
-        if (prev <= 0) {
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current)
-          }
-          return 0
-        }
-        
-        const newValue = prev - 1
-        
-        // Stop at 101 when reaching 101
-        if (newValue < 101) {
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current)
-          }
-          return 101
-        }
-        
-        // Fast from 320 to 220, then slow down after 220
-        if (prev > 220 && newValue <= 220) {
-          // Just crossed 220, switch to slow
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current)
-          }
-          intervalRef.current = setInterval(updateCounter, 1000)
-        }
-        
-        return newValue
-      })
-    }
-
-    // Start with fast interval (150ms) from 320 to 220
-    intervalRef.current = setInterval(updateCounter, 150)
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [])
-
-  return (
-    <div className="text-sm sm:text-base md:text-lg font-semibold text-white mb-2 text-left">
-      <span className="font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl inline-block tabular-nums min-w-[3ch] sm:min-w-[4ch] md:min-w-[4ch] lg:min-w-[4ch]" style={{ color: '#fd2d55' }}>{spots}</span><span className="text-sm sm:text-base md:text-lg"> spots remaining</span>
-    </div>
-  )
-}
-
 export function Hero() {
   return (
     <section className="relative bg-surface-dark text-surface-dark-foreground pt-24 pb-10 sm:pt-28 sm:pb-12 md:pt-32 md:pb-16 lg:pt-36 lg:pb-20 overflow-hidden">
@@ -114,7 +60,6 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col gap-5 sm:gap-6 md:gap-7 lg:gap-8 pt-1 justify-start">
-              <ScarcityCounter />
               <Button 
                 onClick={() => {
                   if (typeof window !== 'undefined' && window.showTapRainOffers) {
